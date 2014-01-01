@@ -19,6 +19,10 @@ describe "Authentication" do
 			it { should have_title('Sign in') }
 			it { should have_error_message('Invalid') }
 
+			it { should_not have_link('Profile') }
+			it { should_not have_link('Settings') }
+			it { should_not have_link('Sign out', href: signout_path) }
+
 			describe "after visiting another page" do
 				before { click_link "Home" }
 				it { should_not have_error_message('Invalid') }
@@ -51,14 +55,24 @@ describe "Authentication" do
 			describe "when attempting to visit a protected page" do
 				before do
 				  visit edit_user_path(user)
-				  fill_in "Email", 		with: user.email
-				  fill_in "Password", 	with: user.password
-				  click_button "Sign in"
+				  valid_signin(user)
 				end
 
 				describe "after signing in" do
 					it "should render the desired protected page" do
 						expect(page).to have_title('Edit user')
+					end
+				end
+
+				describe "when signing in again" do
+					before do
+						delete sighout_path
+						visit signin_path
+						valid_signin user
+					end
+
+					it "should render the default (profile) page" do
+						expect(page).to have_title(user.name)
 					end
 				end
 			end
