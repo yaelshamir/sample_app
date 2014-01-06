@@ -30,6 +30,26 @@ describe "Static pages" do
           expect(page).to have_selector("li##{item.id}", text: item.content)
         end
       end
+
+      it "should show the pluralization" do
+        numOfPosts = user.microposts.count
+        expect(page).to have_content(numOfPosts)
+        if (numOfPosts > 1)
+          expect(page).to have_content("microposts")
+        else
+          expect(page).to have_content("micropost")
+        end
+      end
+
+      describe "should post a new micropost" do
+        before do
+          fill_in 'micropost_content', with: "Hello world!"
+          click_button "Post"
+        end
+
+        it { should have_content("Hello world!") }
+      end
+
     end
   end
 

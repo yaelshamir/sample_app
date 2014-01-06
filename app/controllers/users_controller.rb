@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   end
 
   def new
+    p params.inspect
     @user = User.new
   end
 
